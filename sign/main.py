@@ -12,7 +12,7 @@ class SignMixin(object):
 
     def sign(self, data: dict = None):
         payload = copy.deepcopy(data)
-        if payload is None:
+        if data is None:
             payload = dict()
         payload.update({"secret": self.secret_key})
         pre_sign = self.join_dict(payload)

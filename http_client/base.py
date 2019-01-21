@@ -6,17 +6,17 @@ from sign import SignMixin
 
 class HttpClient(SignMixin):
     """Http客户端"""
-    def __init__(self, api_key, secret_key, url='http://open.coinceres.com/api/v1'):
+    def __init__(self, api_key, secret_key, host='open.coinceres.com', url='api/v1'):
         """
         :param api_key:
         :param secret_key:
         """
         self.api_key = api_key
         self.secret_key = secret_key
-        self.url = url
+        self.url = self.join_url("http:/", host, url)
 
-    @staticmethod
-    def join_url(*paths):
+    @classmethod
+    def join_url(cls, *paths):
         return "/".join("{}".format(value) for value in paths)
 
     def _do_post(self, api: str, data: dict = None):
@@ -111,11 +111,11 @@ class HttpClient(SignMixin):
         創建市價訂單
         :param exchange: 交易所名稱 OKEX,BINANCE,HUOBI,BITFINEX,BITMEX
         :param contract: 幣對或合約名稱
-        :param entrust_price: 委託價格
         :param entrust_vol: 交易量
         :param entrust_bs: 交易方向 "buy"/"sell"
         :param future_dir: "open"/"close"
         :param lever: 槓桿倍數
+        :param entrust_price: 委託價格
         :param profit_value: 止盈价,合约必传
         :param stop_value: 止损价，合约必传
         :param client_oid: 来源标记
@@ -125,17 +125,17 @@ class HttpClient(SignMixin):
                            entrust_price, profit_value, stop_value, client_oid)
 
     def limit_order(self, exchange: str, contract: str, entrust_vol: str, entrust_bs: str, future_dir: str,
-                    lever: str, entrust_price: str = None, profit_value: str = None, stop_value: str = None,
+                    lever: str, entrust_price: str, profit_value: str = None, stop_value: str = None,
                     client_oid: str = None):
         """
         創建限價訂單
         :param exchange: 交易所名稱 OKEX,BINANCE,HUOBI,BITFINEX,BITMEX
         :param contract: 幣對或合約名稱
-        :param entrust_price: 委託價格
         :param entrust_vol: 交易量
         :param entrust_bs: 交易方向 "buy"/"sell"
         :param future_dir: "open"/"close"
         :param lever: 槓桿倍數
+        :param entrust_price: 委託價格
         :param profit_value: 止盈价,合约必传
         :param stop_value: 止损价，合约必传
         :param client_oid: 来源标记

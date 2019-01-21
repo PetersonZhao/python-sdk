@@ -12,7 +12,7 @@ def test_sign():
 
 
 def test_contract():
-    r = HttpClient(api_key="dWbkgDeLIzLavnYs", secret_key="dePW2XslyzFYnTuc41yRhqHIUWEVco4W", url="http://192.168.50.172/api/v1").contract_info("BITMEX")
+    r = HttpClient(api_key="dWbkgDeLIzLavnYs", secret_key="dePW2XslyzFYnTuc41yRhqHIUWEVco4W", host="192.168.50.172").contract_info("BITMEX")
     print(r)
     r = HttpClient(api_key="aYyjubTcVJveotCU", secret_key="aW2nGNZkJnfW6JaSvMZBG3DdFCmcVGyl").contract_info("BITMEX")
     print(r)
@@ -25,4 +25,5 @@ def test_account():
 
 def test_order():
     r = HttpClient(api_key="dWbkgDeLIzLavnYs", secret_key="dePW2XslyzFYnTuc41yRhqHIUWEVco4W",
-                   url="http://192.168.50.172/api/v1").market_order("BITMEX", "")
+                   host="192.168.50.172").limit_order("BITMEX", "ADA_BTC", "10", "buy", "open", "10", "0.000011", "0.00000997")
+    print(r)
