@@ -13,11 +13,16 @@ def test_sign():
 
 def test_contract():
     r = HttpClient(api_key="dWbkgDeLIzLavnYs", secret_key="dePW2XslyzFYnTuc41yRhqHIUWEVco4W", url="http://192.168.50.172/api/v1").contract_info("BITMEX")
-    print(r.json())
+    print(r)
     r = HttpClient(api_key="aYyjubTcVJveotCU", secret_key="aW2nGNZkJnfW6JaSvMZBG3DdFCmcVGyl").contract_info("BITMEX")
-    print(r.json())
+    print(r)
 
 
 def test_account():
     r = HttpClient(api_key="aYyjubTcVJveotCU", secret_key="aW2nGNZkJnfW6JaSvMZBG3DdFCmcVGyl").account()
-    print(r.json())
+    print(r)
+
+
+def test_order():
+    r = HttpClient(api_key="dWbkgDeLIzLavnYs", secret_key="dePW2XslyzFYnTuc41yRhqHIUWEVco4W",
+                   url="http://192.168.50.172/api/v1").market_order("BITMEX", "")
