@@ -60,6 +60,28 @@ class HttpClient(SignMixin):
             }
         return self._do_get(api="trade/account", data=data).json()
 
+    def order_info(self, system_oid: str = None, status: int = None, exchange: str = None, contract: str = None):
+        """
+        查詢訂單詳情
+        :param system_oid: 系统生成订单号，逗号分隔，最多可查询15个
+        :param status: 订单状态
+        :param exchange: 交易所名稱
+        :param contract: 幣對或合約名稱
+        :return:
+        """
+        data = dict()
+        if system_oid:
+            data.update(system_oid=system_oid)
+        if status:
+            data.update(status=status)
+        if exchange:
+            data.update(exchange=exchange)
+        if contract:
+            data.update(contract=contract)
+        if not data:
+            data = None
+        return self._do_get("trade/order", data=data).json()
+
     def _order(self, exchange: str, contract: str, entrust_vol: str, entrust_bs: str, future_dir: str,
                lever: str, price_type: str, entrust_price: str = None, profit_value: str = None,
                stop_value: str = None, client_oid: str = None):
@@ -133,24 +155,36 @@ class HttpClient(SignMixin):
         }
         return self._do_delete("trade/order/", data=payload).json()
 
-    def order_info(self, system_oid: str, status: int, exchange: str, contract: str):
+    def open_contract(self, exchange: str = None, contract: str = None, position_dir: str = None):
         """
-        查詢訂單詳情
-        :param system_oid: 系统生成订单号，逗号分隔，最多可查询15个
-        :param status: 订单状态
-        :param exchange: 交易所名稱
-        :param contract: 幣對或合約名稱
+        查询合约持仓信息
+        :param exchange: 交易所名称
+        :param contract: 合约名称
+        :param position_dir: 持仓方向，多: "buy"/空: "sell"
         :return:
         """
         data = dict()
-        if system_oid:
-            data.update(system_oid=system_oid)
-        if status:
-            data.update(status=status)
         if exchange:
             data.update(exchange=exchange)
         if contract:
             data.update(contract=contract)
+        if position_dir:
+            data.update(position_dir=position_dir)
         if not data:
             data = None
-        return self._do_get("trade/order", data=data).json()
+        return self._do_get("trade/position", data=data).json()
+
+    def transaction(self, exchange: str, contract: str, count: int):
+        """
+        查询成交纪录
+        :param exchange: 交易所名称
+        :param contract: 币币交易对或合约名称
+        :param count: 查询数量 最大50
+        :return:
+        """
+        data = dict(
+            exchange=exchange,
+            contract=contract,
+            count=count
+        )
+        return self._do_get("trade/trans", data=data).json()
