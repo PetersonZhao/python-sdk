@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-import requests
+from coinceres.exceptions import error_helper
+from coinceres.http import HttpRequest
+from coinceres.sign import SignMixin
 
-from sign import SignMixin
 
-
-class HttpClient(SignMixin):
+class APIClient(HttpRequest, SignMixin):
     """Http客户端"""
+
     def __init__(self, api_key, secret_key, host='open.coinceres.com', url='api/v1'):
         """
         :param api_key:
@@ -15,24 +16,7 @@ class HttpClient(SignMixin):
         self.secret_key = secret_key
         self.url = self.join_url("http:/", host, url)
 
-    @classmethod
-    def join_url(cls, *paths):
-        return "/".join("{}".format(value) for value in paths)
-
-    def _do_post(self, api: str, data: dict = None):
-        headers = {'api_key': self.api_key, 'sign': self.sign(data)}
-        return requests.post(self.join_url(self.url, api), json=data, headers=headers)
-
-    def _do_get(self, api: str, data: dict = None):
-        headers = {'api_key': self.api_key, 'sign': self.sign(data)}
-        if data is None:
-            return requests.get(self.join_url(self.url, api), headers=headers)
-        return requests.get(self.join_url(self.url, api), params=data, headers=headers)
-
-    def _do_delete(self, api: str, data: dict = None):
-        headers = {'api_key': self.api_key, 'sign': self.sign(data)}
-        return requests.delete(self.join_url(self.url, api), params=data, headers=headers)
-
+    @error_helper
     def contract_info(self, exchange: str, contract: str = None):
         """
         獲取交易所內各幣對基本信息
@@ -45,8 +29,9 @@ class HttpClient(SignMixin):
         }
         if contract:
             data.update(contract=contract)
-        return self._do_get(api="basic/contracts", data=data).json()
+        return self._do_get(api="basic/contracts", data=data)
 
+    @error_helper
     def account(self, exchange: str = None):
         """
         獲取帳號信息
@@ -58,8 +43,9 @@ class HttpClient(SignMixin):
             data = {
                 "exchange": exchange
             }
-        return self._do_get(api="trade/account", data=data).json()
+        return self._do_get(api="trade/account", data=data)
 
+    @error_helper
     def order_info(self, system_oid: str = None, status: int = None, exchange: str = None, contract: str = None):
         """
         查詢訂單詳情
@@ -80,8 +66,9 @@ class HttpClient(SignMixin):
             data.update(contract=contract)
         if not data:
             data = None
-        return self._do_get("trade/order", data=data).json()
+        return self._do_get("trade/order", data=data)
 
+    @error_helper
     def _order(self, exchange: str, contract: str, entrust_vol: str, entrust_bs: str, future_dir: str,
                lever: str, price_type: str, entrust_price: str = None, profit_value: str = None,
                stop_value: str = None, client_oid: str = None):
@@ -102,7 +89,7 @@ class HttpClient(SignMixin):
             payload.update(stop_value=stop_value)
         if client_oid:
             payload.update(client_oid=client_oid)
-        return self._do_post("trade/input", data=payload).json()
+        return self._do_post("trade/input", data=payload)
 
     def market_order(self, exchange: str, contract: str, entrust_vol: str, entrust_bs: str, future_dir: str,
                      lever: str, entrust_price: str = None, profit_value: str = None, stop_value: str = None,
@@ -144,6 +131,7 @@ class HttpClient(SignMixin):
         return self._order(exchange, contract, entrust_vol, entrust_bs, future_dir, lever, "limit",
                            entrust_price, profit_value, stop_value, client_oid)
 
+    @error_helper
     def delete_order(self, system_oid: str):
         """
         取消訂單
@@ -153,8 +141,9 @@ class HttpClient(SignMixin):
         payload = {
             "system_oid": system_oid
         }
-        return self._do_delete("trade/order/", data=payload).json()
+        return self._do_delete("trade/order/", data=payload)
 
+    @error_helper
     def open_contract(self, exchange: str = None, contract: str = None, position_dir: str = None):
         """
         查询合约持仓信息
@@ -172,8 +161,9 @@ class HttpClient(SignMixin):
             data.update(position_dir=position_dir)
         if not data:
             data = None
-        return self._do_get("trade/position", data=data).json()
+        return self._do_get("trade/position", data=data)
 
+    @error_helper
     def transaction(self, exchange: str, contract: str, count: int):
         """
         查询成交纪录
@@ -187,4 +177,4 @@ class HttpClient(SignMixin):
             contract=contract,
             count=count
         )
-        return self._do_get("trade/trans", data=data).json()
+        return self._do_get("trade/trans", data=data)
