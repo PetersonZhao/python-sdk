@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import setuptools
+from coinceres.version import version
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -8,7 +9,7 @@ REQUIRED_PYTHON = (3, 5)
 
 setuptools.setup(
     name="coinceres",
-    version="0.0.1",
+    version=version,
     author="Peter Zhao",
     author_email="zhao6217@outlook.com",
     description="coinceres API SDK",
