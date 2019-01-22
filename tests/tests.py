@@ -13,12 +13,10 @@ def test_sign():
 def test_contract():
     r = APIClient(api_key="dWbkgDeLIzLavnYs", secret_key="dePW2XslyzFYnTuc41yRhqHIUWEVco4W", host="192.168.50.172").contract_info("BITMEX")
     print(r)
-    r = APIClient(api_key="aYyjubTcVJveotCU", secret_key="aW2nGNZkJnfW6JaSvMZBG3DdFCmcVGyl").contract_info("BITMEX")
-    print(r)
 
 
 def test_account():
-    r = APIClient(api_key="aYyjubTcVJveotCU", secret_key="aW2nGNZkJnfW6JaSvMZBG3DdFCmcVGyl").account()
+    r = APIClient(api_key="dWbkgDeLIzLavnYs", secret_key="dePW2XslyzFYnTuc41yRhqHIUWEVco4W", host="192.168.50.172").account()
     print(r)
 
 
