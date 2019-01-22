@@ -107,3 +107,6 @@ venv.bak/
 # http://www.jetbrains.com/pycharm/webhelp/project.html
 .idea
 .iml
+
+# pytest
+.pytest_cache
