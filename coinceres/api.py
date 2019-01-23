@@ -27,7 +27,7 @@ class APIClient(HttpRequest, SignMixin):
         data = {
             "exchange": exchange
         }
-        if contract:
+        if contract is not None:
             data.update(contract=contract)
         return self._do_get(api="basic/contracts", data=data)
 
@@ -39,7 +39,7 @@ class APIClient(HttpRequest, SignMixin):
         :return:
         """
         data = None
-        if exchange:
+        if exchange is not None:
             data = {
                 "exchange": exchange
             }
@@ -56,13 +56,13 @@ class APIClient(HttpRequest, SignMixin):
         :return:
         """
         data = dict()
-        if system_oid:
+        if system_oid is not None:
             data.update(system_oid=system_oid)
-        if status:
+        if status is not None:
             data.update(status=status)
-        if exchange:
+        if exchange is not None:
             data.update(exchange=exchange)
-        if contract:
+        if contract is not None:
             data.update(contract=contract)
         if not data:
             data = None
@@ -81,13 +81,13 @@ class APIClient(HttpRequest, SignMixin):
             "future_dir": future_dir,
             "lever": lever,
         }
-        if entrust_price:
+        if entrust_price is not None:
             payload.update(entrust_price=entrust_price)
-        if profit_value:
+        if profit_value is not None:
             payload.update(profit_value=profit_value)
-        if stop_value:
+        if stop_value is not None:
             payload.update(stop_value=stop_value)
-        if client_oid:
+        if client_oid is not None:
             payload.update(client_oid=client_oid)
         return self._do_post("trade/input", data=payload)
 
@@ -153,11 +153,11 @@ class APIClient(HttpRequest, SignMixin):
         :return:
         """
         data = dict()
-        if exchange:
+        if exchange is not None:
             data.update(exchange=exchange)
-        if contract:
+        if contract is not None:
             data.update(contract=contract)
-        if position_dir:
+        if position_dir is not None:
             data.update(position_dir=position_dir)
         if not data:
             data = None
