@@ -6,6 +6,8 @@
 
 ```pip install coinceres```
 
+### Example
+
 ```python
 
 import coinceres

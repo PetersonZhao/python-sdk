@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from coinceres.exceptions import error_helper
-from coinceres.http import HttpRequest
+from coinceres.http_client import HttpRequest
 from coinceres.sign import SignMixin
 
 

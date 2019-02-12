@@ -4,7 +4,7 @@ import copy
 
 
 class SignMixin(object):
-    secret_key = "TQAFrtRS4WrUn1hHKByszao3ozWvIMkF"
+    secret_key = None
 
     @classmethod
     def join_dict(cls, payload: list) -> str:
