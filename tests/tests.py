@@ -26,6 +26,11 @@ def test_account():
 
 def test_order():
     r = APIClient(api_key="dWbkgDeLIzLavnYs", secret_key="dePW2XslyzFYnTuc41yRhqHIUWEVco4W",
-                  host="192.168.50.172").limit_order("BITMEX", "BTC_USDT", "10", "buy", "open", "10", "0.000011",
+                  host="192.168.50.172").limit_order("BITMEX", "BTC/USDT", "10", "buy", "open", "10", "0.000011",
                                                      "0.00000997")
+    print(r)
+
+
+def test_depth():
+    r = APIClient(host="market.coinceres.com").depth("HUOBI", "BTC/USDT")
     print(r)

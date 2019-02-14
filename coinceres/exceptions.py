@@ -9,6 +9,8 @@ def error_helper(f):
         data = r.json()
         if r.status_code != 200:
             raise ValueError(data.get('message'))
+        if data.get('code') is None:
+            return data
         if data.get('code') != '200':
             raise ValueError(data.get('message'))
         return data.get('data')

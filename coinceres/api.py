@@ -7,7 +7,7 @@ from coinceres.sign import SignMixin
 class APIClient(HttpRequest, SignMixin):
     """Http客户端"""
 
-    def __init__(self, api_key, secret_key, host='open.coinceres.com', url='api/v1'):
+    def __init__(self, api_key=None, secret_key=None, host='open.coinceres.com', url='api/v1'):
         """
         :param api_key:
         :param secret_key:
@@ -178,3 +178,48 @@ class APIClient(HttpRequest, SignMixin):
             count=count
         )
         return self._do_get("trade/trans", data=data)
+
+    @error_helper
+    def kline(self, exchange: str, contract: str, duration: str, begin: str = None, end: str = None, size: int = None):
+        data = dict(
+            exchange=exchange,
+            contract=contract,
+            duration=duration,
+        )
+        if begin:
+            data.update(begin=begin)
+        if end:
+            data.update(end=end)
+        if size:
+            data.update(size=size)
+        return self._do_post("query/cycle/data/history", data=data)
+
+    @error_helper
+    def trade(self, exchange: str, contract: str, begin: str = None, end: str = None, size: int = None):
+        data = dict(
+            exchange=exchange,
+            contract=contract,
+        )
+        if begin:
+            data.update(begin=begin)
+        if end:
+            data.update(end=end)
+        if size:
+            data.update(size=size)
+        return self._do_post("query/trade/data", data=data)
+
+    @error_helper
+    def depth(self, exchange: str, contract: str):
+        data = dict(
+            exchange=exchange,
+            contract=contract,
+        )
+        return self._do_post("query/depth10/data", data=data)
+
+    @error_helper
+    def tick(self, exchange: str, contract: str):
+        data = dict(
+            exchange=exchange,
+            contract=contract,
+        )
+        return self._do_post("query/tick/data", data=data)

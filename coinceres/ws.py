@@ -15,10 +15,6 @@ except ImportError:
 
 def on_message(ws, message):
     print(message)
-    print('------')
-    print(ws.sock.recv_data())
-    print('------')
-    # pass
 
 
 def on_error(ws, error):
@@ -31,15 +27,12 @@ def on_close(ws):
 
 def on_open(ws):
     def run(*args):
-        for i in range(30):
+        while True:
             time.sleep(1)
+            ws.send(json.dumps([{'msg_type': 'subscribe_tick', "exchange": "HUOBI", "contract": "BTC/USDT"}, ]))
             # ws.send("Hello %d" % i)
-            ws.send(json.dumps({'msg_type': 'subscribe_tick', 'symbol': 'HUOBI/BTC_USDT'}))
             # payload = 'ping'
             # ws.send(payload)
-        time.sleep(1)
-        ws.close()
-        print("thread terminating...")
 
     thread.start_new_thread(run, ())
 
@@ -55,8 +48,8 @@ class CeresSocketApp(websocket.WebSocketApp):
             self.last_ping_tm = time.time()
             if self.sock:
                 try:
-                    # payload = json.dumps({'msg_type': 'ping'}).encode("utf-8")
-                    payload = 'ping'.encode('utf-8')
+                    payload = json.dumps({'msg_type': 'ping'}).encode("utf-8")
+                    # payload = 'ping'.encode('utf-8')
                     print('send ping')
                     self.sock.send(payload)
                 except Exception as ex:
@@ -105,8 +98,8 @@ class CeresWSClient(object):
 
 
 if __name__ == "__main__":
-    # websocket.enableTrace(True)
-    ws = CeresSocketApp("ws://192.168.50.172:18002/",
+    websocket.enableTrace(True)
+    ws = CeresSocketApp("ws://192.168.50.172:18003/",
                         on_message=on_message,
                         on_error=on_error,
                         on_close=on_close,)
