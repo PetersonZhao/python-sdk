@@ -37,7 +37,7 @@ def test_depth():
 
 
 def test_kline():
-    r = APIClient(host="market.coinceres.com").kline("HUOBI", "BTC/USDT", '1d', '1556985600000', '1550130387000')
+    r = APIClient(host="market.coinceres.com").kline("HUOBI", "BTC/USDT", '1d', '1546985600000', '1560130387000')
     print(r)
 
 
@@ -47,5 +47,5 @@ def test_tick():
 
 
 def test_trade():
-    r = APIClient(host="market.coinceres.com").trade("HUOBI", "BTC/USDT", '1556985600000', '1550130387000')
+    r = APIClient(host="market.coinceres.com").trade("HUOBI", "BTC/USDT", '1546985600000', '1560130387000')
     print(r)
