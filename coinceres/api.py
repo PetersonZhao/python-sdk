@@ -141,9 +141,65 @@ class APIClient(HttpRequest, SignMixin):
         payload = {
             "system_oid": system_oid
         }
-        return self._do_delete("trade/order/", data=payload)
+        return self._do_delete("trade/order", data=payload)
 
-    @error_helper
+    @_error_handler
+    def close_order(self, exchange: str, contract: str, price_type: str, entrust_vol: str, entrust_bs: str,
+                    entrust_price: str = None, deal_id: str = None, client_oid: str = None, close_rule: str = None):
+        """
+        平仓
+        :param exchange: 交易所名称
+        :param contract: 合约名称
+        :param price_type: 市价：market 限价： limit
+        :param entrust_vol: 委托量，限价买、卖、市价卖是数量，市价买是金额
+        :param entrust_bs: 买：buy 卖：sell
+        :param entrust_price: 委托价格， 限价必传
+        :param deal_id: 平仓持仓号，合约平仓需指定的持仓单号
+        :param client_oid: 客户端标识
+        :param close_rule: 平仓规则
+        :return:
+        """
+        payload = dict(
+            exchange=exchange,
+            contract=contract,
+            price_type=price_type,
+            entrust_vol=entrust_vol,
+            entrust_bs=entrust_bs
+        )
+        if entrust_price is not None:
+            payload.update(entrust_price=entrust_price)
+        if deal_id is not None:
+            payload.update(deal_id=deal_id)
+        if client_oid is not None:
+            payload.update(client_oid=client_oid)
+        if close_rule is not None:
+            payload.update(close_rule=close_rule)
+        return self._do_post("trade/close", data=payload)
+
+    # @_error_handler
+    # def contract_order(self, exchange: str, contract: str, price_type: str, entrust_vol: str, entrust_bs: str,
+    #                    future_dir: str = None, lever: str = None, entrust_price: str = None, profit_value: str = None,
+    #                    stop_value: str = None, client_oid: str = None):
+    #     payload = {
+    #         "exchange": exchange,
+    #         "contract": contract,
+    #         "price_type": price_type,
+    #         "entrust_vol": entrust_vol,
+    #         "entrust_bs": entrust_bs,
+    #         "future_dir": future_dir,
+    #         "lever": lever,
+    #     }
+    #     if entrust_price is not None:
+    #         payload.update(entrust_price=entrust_price)
+    #     if profit_value is not None:
+    #         payload.update(profit_value=profit_value)
+    #     if stop_value is not None:
+    #         payload.update(stop_value=stop_value)
+    #     if client_oid is not None:
+    #         payload.update(client_oid=client_oid)
+    #     return self._do_post("trade/input", data=payload)
+
+    @_error_handler
     def open_contract(self, exchange: str = None, contract: str = None, position_dir: str = None):
         """
         查询合约持仓信息
