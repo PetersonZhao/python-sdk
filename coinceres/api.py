@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from functools import wraps
 from coinceres.http_client import HttpRequest
 from coinceres.sign import SignMixin
 
@@ -16,35 +15,24 @@ class APIClient(HttpRequest, SignMixin):
         self.secret_key = secret_key
         self.url = self.join_url("http:/", host, url)
 
-    @classmethod
-    def _error_handler(cls, f):
-        @wraps(f)
-        def _wrapper(*args, **kwargs):
-            r = f(*args, **kwargs)
-            data = r.json()
-            if r.status_code != 200:
-                raise ValueError(data.get('message'))
-            if data.get('code') != '200':
-                raise ValueError(data.get('message'))
-            return data.get('data')
-
-        return _wrapper
-
-    @classmethod
-    def _error_handler_market(cls, f):
-        @wraps(f)
-        def _wrapper(*args, **kwargs):
-            r = f(*args, **kwargs)
-            data = r.json()
-            if r.status_code != 200:
-                raise ValueError(data.get('message'))
-            if data.get('code') is None:
-                return data
+    @staticmethod
+    def _error_handler(r):
+        data = r.json()
+        if r.status_code != 200:
             raise ValueError(data.get('message'))
+        if data.get('code') != '200':
+            raise ValueError(data.get('message'))
+        return data.get('data')
 
-        return _wrapper
+    @staticmethod
+    def _error_handler_market(r):
+        data = r.json()
+        if r.status_code != 200:
+            raise ValueError(data.get('message'))
+        if data.get('code') is None:
+            return data
+        raise ValueError(data.get('message'))
 
-    @_error_handler
     def contract_info(self, exchange: str, contract: str = None):
         """
         獲取交易所內各幣對基本信息
@@ -57,9 +45,8 @@ class APIClient(HttpRequest, SignMixin):
         }
         if contract is not None:
             data.update(contract=contract)
-        return self._do_get(api="basic/contracts", data=data)
+        return self._error_handler(self._do_get(api="basic/contracts", data=data))
 
-    @_error_handler
     def account(self, exchange: str = None):
         """
         獲取帳號信息
@@ -71,9 +58,8 @@ class APIClient(HttpRequest, SignMixin):
             data = {
                 "exchange": exchange
             }
-        return self._do_get(api="trade/account", data=data)
+        return self._error_handler(self._do_get(api="trade/account", data=data))
 
-    @_error_handler
     def order_info(self, system_oid: str = None, status: int = None, exchange: str = None, contract: str = None):
         """
         查詢訂單詳情
@@ -94,9 +80,8 @@ class APIClient(HttpRequest, SignMixin):
             data.update(contract=contract)
         if not data:
             data = None
-        return self._do_get("trade/order", data=data)
+        return self._error_handler(self._do_get("trade/order", data=data))
 
-    @_error_handler
     def _order(self, exchange: str, contract: str, entrust_vol: str, entrust_bs: str, future_dir: str,
                lever: str, price_type: str, entrust_price: str = None, profit_value: str = None,
                stop_value: str = None, client_oid: str = None):
@@ -117,7 +102,7 @@ class APIClient(HttpRequest, SignMixin):
             payload.update(stop_value=stop_value)
         if client_oid is not None:
             payload.update(client_oid=client_oid)
-        return self._do_post("trade/input", data=payload)
+        return self._error_handler(self._do_post("trade/input", data=payload))
 
     def market_order(self, exchange: str, contract: str, entrust_vol: str, entrust_bs: str, future_dir: str,
                      lever: str, entrust_price: str = None, profit_value: str = None, stop_value: str = None,
@@ -159,7 +144,6 @@ class APIClient(HttpRequest, SignMixin):
         return self._order(exchange, contract, entrust_vol, entrust_bs, future_dir, lever, "limit",
                            entrust_price, profit_value, stop_value, client_oid)
 
-    @_error_handler
     def delete_order(self, system_oid: str):
         """
         取消訂單
@@ -169,9 +153,8 @@ class APIClient(HttpRequest, SignMixin):
         payload = {
             "system_oid": system_oid
         }
-        return self._do_delete("trade/order", data=payload)
+        return self._error_handler(self._do_delete("trade/order", data=payload))
 
-    @_error_handler
     def close_order(self, exchange: str, contract: str, price_type: str, entrust_vol: str, entrust_bs: str,
                     entrust_price: str = None, deal_id: str = None, client_oid: str = None, close_rule: str = None):
         """
@@ -202,7 +185,7 @@ class APIClient(HttpRequest, SignMixin):
             payload.update(client_oid=client_oid)
         if close_rule is not None:
             payload.update(close_rule=close_rule)
-        return self._do_post("trade/close", data=payload)
+        return self._error_handler(self._do_post("trade/close", data=payload))
 
     # @_error_handler
     # def contract_order(self, exchange: str, contract: str, price_type: str, entrust_vol: str, entrust_bs: str,
@@ -227,7 +210,6 @@ class APIClient(HttpRequest, SignMixin):
     #         payload.update(client_oid=client_oid)
     #     return self._do_post("trade/input", data=payload)
 
-    @_error_handler
     def open_contract(self, exchange: str = None, contract: str = None, position_dir: str = None):
         """
         查询合约持仓信息
@@ -245,9 +227,8 @@ class APIClient(HttpRequest, SignMixin):
             data.update(position_dir=position_dir)
         if not data:
             data = None
-        return self._do_get("trade/position", data=data)
+        return self._error_handler(self._do_get("trade/position", data=data))
 
-    @_error_handler
     def transaction(self, exchange: str, contract: str, count: int):
         """
         查询成交纪录
@@ -261,9 +242,8 @@ class APIClient(HttpRequest, SignMixin):
             contract=contract,
             count=count
         )
-        return self._do_get("trade/trans", data=data)
+        return self._error_handler(self._do_get("trade/trans", data=data))
 
-    @_error_handler_market
     def kline(self, exchange: str, contract: str, duration: str, begin: str = None, end: str = None, size: int = None):
         """
 
@@ -289,9 +269,8 @@ class APIClient(HttpRequest, SignMixin):
             data.update(end=end)
         if size:
             data.update(size=size)
-        return self._do_get("market/candle", data=data)
+        return self._error_handler_market(self._do_get("market/candle", data=data))
 
-    @_error_handler_market
     def trade(self, exchange: str, contract: str, begin: str = None, end: str = None, size: int = None):
         data = dict(
             exchange=exchange,
@@ -303,20 +282,18 @@ class APIClient(HttpRequest, SignMixin):
             data.update(end=end)
         if size:
             data.update(size=size)
-        return self._do_get("market/trade", data=data)
+        return self._error_handler_market(self._do_get("market/trade", data=data))
 
-    @_error_handler_market
     def depth(self, exchange: str, contract: str):
         data = dict(
             exchange=exchange,
             contract=contract,
         )
-        return self._do_get("market/depth10", data=data)
+        return self._error_handler_market(self._do_get("market/depth10", data=data))
 
-    @_error_handler_market
     def tick(self, exchange: str, contract: str):
         data = dict(
             exchange=exchange,
             contract=contract,
         )
-        return self._do_get("market/tick", data=data)
+        return self._error_handler_market(self._do_get("market/tick", data=data))
