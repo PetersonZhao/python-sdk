@@ -7,7 +7,7 @@ class SignMixin(object):
     secret_key = None
 
     @classmethod
-    def join_dict(cls, payload: list) -> str:
+    def join_list(cls, payload: list) -> str:
         return "&".join(payload)
 
     @classmethod
@@ -18,6 +18,7 @@ class SignMixin(object):
         payload = copy.deepcopy(data)
         if data is None:
             payload = dict()
-        payload.update({"secret": self.secret_key})
-        pre_sign = self.join_dict(self.sorted_dict(payload))
+        pre_sign_list = self.sorted_dict(payload)
+        pre_sign_list.append("secret={}".format(self.secret_key))
+        pre_sign = self.join_list(pre_sign_list)
         return hashlib.sha256(pre_sign.encode("utf8")).hexdigest()
