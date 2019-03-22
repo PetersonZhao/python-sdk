@@ -31,6 +31,15 @@ def test_order():
     print(r)
 
 
+def test_close():
+    r = APIClient(api_key="dWbkgDeLIzLavnYs", secret_key="dePW2XslyzFYnTuc41yRhqHIUWEVco4W",
+                  host="192.168.50.172").close_order(exchange="BITMEX", contract="XBTUSD", price_type="market",
+                                                     entrust_vol="1",
+                                                     entrust_bs="sell",
+                                                     close_rule="time")
+    print(r)
+
+
 def test_depth():
     r = APIClient(host="market.coinceres.com").depth("HUOBI", "BTC/USDT")
     print(r)
