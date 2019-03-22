@@ -26,9 +26,10 @@ def test_account():
 
 def test_order():
     r = APIClient(api_key="dWbkgDeLIzLavnYs", secret_key="dePW2XslyzFYnTuc41yRhqHIUWEVco4W",
-                  host="192.168.50.172").limit_order("BITMEX", "BTC/USDT", "10", "buy", "open", "10", "0.000011",
-                                                     "0.00000997")
+                  host="192.168.50.172").limit_order(exchange="BITMEX", contract="XBTH19", entrust_price="3500",
+                                                     future_dir="open", entrust_vol="1", entrust_bs="sell", lever="1")
     print(r)
+    return r
 
 
 def test_close():
@@ -37,6 +38,12 @@ def test_close():
                                                      entrust_vol="1",
                                                      entrust_bs="sell",
                                                      close_rule="time")
+    print(r)
+
+
+def test_delete_order():
+    r = APIClient(api_key="dWbkgDeLIzLavnYs", secret_key="dePW2XslyzFYnTuc41yRhqHIUWEVco4W",
+                   host="192.168.50.172").delete_order('123')
     print(r)
 
 
