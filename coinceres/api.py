@@ -187,29 +187,6 @@ class APIClient(HttpRequest, SignMixin):
             payload.update(close_rule=close_rule)
         return self._error_handler(self._do_post("trade/close", data=payload))
 
-    # @_error_handler
-    # def contract_order(self, exchange: str, contract: str, price_type: str, entrust_vol: str, entrust_bs: str,
-    #                    future_dir: str = None, lever: str = None, entrust_price: str = None, profit_value: str = None,
-    #                    stop_value: str = None, client_oid: str = None):
-    #     payload = {
-    #         "exchange": exchange,
-    #         "contract": contract,
-    #         "price_type": price_type,
-    #         "entrust_vol": entrust_vol,
-    #         "entrust_bs": entrust_bs,
-    #         "future_dir": future_dir,
-    #         "lever": lever,
-    #     }
-    #     if entrust_price is not None:
-    #         payload.update(entrust_price=entrust_price)
-    #     if profit_value is not None:
-    #         payload.update(profit_value=profit_value)
-    #     if stop_value is not None:
-    #         payload.update(stop_value=stop_value)
-    #     if client_oid is not None:
-    #         payload.update(client_oid=client_oid)
-    #     return self._do_post("trade/input", data=payload)
-
     def open_contract(self, exchange: str = None, contract: str = None, position_dir: str = None):
         """
         查询合约持仓信息
