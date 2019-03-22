@@ -20,4 +20,4 @@ class HttpRequest(object):
 
     def _do_delete(self, api: str, data: dict = None):
         headers = {'api_key': self.api_key, 'sign': self.sign(data)}
-        return requests.delete(self.join_url(self.url, api), params=data, headers=headers)
+        return requests.delete(self.join_url(self.url, api, data.get('system_oid')), headers=headers)
